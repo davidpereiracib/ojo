@@ -3,28 +3,483 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex">
-<title>ojo · SecPro</title>
+<title>ojo · ¿Algo te huele raro?</title>
+<meta name="description" content="Qué mirar antes de hacer clic, qué hacer si ya pasó y a quién reportar. Material de concienciación de SecPro.">
+<meta name="theme-color" content="#001D7E">
 <style>
-  :root { --azul:#001D7E; --rojo:#FF0000; }
-  * { box-sizing:border-box; }
-  body {
-    margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center;
-    background:var(--azul); color:#fff; text-align:center; padding:2rem;
-    font-family:"Segoe UI",system-ui,-apple-system,sans-serif;
-  }
-  .marca { font-size:clamp(3rem,14vw,7rem); font-weight:700; letter-spacing:-.04em; line-height:1; }
-  .marca span { color:var(--rojo); }
-  p { margin:1.25rem 0 0; opacity:.75; font-size:1.05rem; }
-  small { display:block; margin-top:3rem; opacity:.45; font-size:.8rem; }
+/* ============ tokens ============ */
+:root{
+  --senal:#001D7E;      /* azul SecPro */
+  --aire:#FF0000;       /* rojo SecPro — solo urgencia, nunca decoración */
+  --pantalla:#070B18;   /* neutro profundo */
+  --tinta:#10172E;
+  --humo:#EEF1F8;
+  --niebla:#5C6478;
+  --papel:#FFFFFF;
+  --borde:#D5DCEC;
+
+  --chyron-h:4px;
+  --r:3px;              /* el chyron no tiene esquinas redondas */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--papel);color:var(--tinta);
+  font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",sans-serif;
+  font-weight:350;font-size:17px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:860px;margin:0 auto;padding:0 22px}
+
+/* ============ roles tipográficos ============ */
+.display{font-weight:700;letter-spacing:-.035em;line-height:.96;
+  font-size:clamp(2.7rem,9.5vw,5.2rem)}
+.rotulo{font-weight:700;letter-spacing:.17em;text-transform:uppercase;
+  font-size:11px;line-height:1}
+h2{font-weight:700;letter-spacing:-.022em;line-height:1.1;
+  font-size:clamp(1.6rem,4.4vw,2.3rem)}
+h3{font-weight:700;letter-spacing:-.012em;font-size:1.12rem;line-height:1.3}
+p{font-weight:350}
+.sec-sub{color:var(--niebla);margin-top:10px;max-width:60ch}
+
+/* ============ barra superior: la luz de aire ============ */
+.aire-bar{position:sticky;top:0;z-index:50;background:var(--pantalla);color:#fff;
+  display:flex;align-items:center;gap:11px;padding:9px 22px;font-size:11px;
+  font-weight:700;letter-spacing:.17em;text-transform:uppercase}
+.punto{width:8px;height:8px;border-radius:50%;background:var(--aire);flex:0 0 auto;
+  animation:latir 2s ease-in-out infinite}
+@keyframes latir{0%,100%{opacity:1}50%{opacity:.28}}
+.aire-bar .sep{flex:1}
+.aire-bar .marca{opacity:.55;letter-spacing:.12em}
+
+/* ============ portada ============ */
+.hero{background:var(--senal);color:#fff;padding:70px 0 64px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--chyron-h);
+  background:var(--aire)}
+.hero .display{max-width:13ch}
+.hero p{margin-top:24px;font-size:clamp(1.05rem,2.6vw,1.3rem);
+  color:rgba(255,255,255,.82);max-width:46ch}
+
+/* ============ el chyron: componente firma ============ */
+.chyron{display:flex;align-items:stretch;width:100%;text-align:left;
+  background:var(--senal);color:#fff;border:0;border-radius:var(--r);
+  cursor:pointer;font-family:inherit;overflow:hidden;
+  transition:transform .18s ease, box-shadow .18s ease}
+.chyron:hover,.chyron:focus-visible{transform:translateX(5px);
+  box-shadow:-5px 0 0 0 var(--aire)}
+.chyron:focus-visible{outline:3px solid var(--aire);outline-offset:3px}
+.chyron .bloque{flex:0 0 13px;background:var(--aire)}
+.chyron .cuerpo{flex:1;padding:15px 19px}
+.chyron .nombre{display:block;font-weight:700;font-size:1.12rem;letter-spacing:-.012em;line-height:1.22}
+.chyron .cargo{display:block;font-size:12.5px;color:rgba(255,255,255,.72);margin-top:4px;
+  letter-spacing:.03em;line-height:1.3}
+.chyron .mas{flex:0 0 46px;display:flex;align-items:center;justify-content:center;
+  font-size:21px;font-weight:300;color:rgba(255,255,255,.65);
+  transition:transform .22s ease}
+.chyron[aria-expanded="true"] .mas{transform:rotate(45deg)}
+.chyron.alerta{background:var(--aire)}
+.chyron.alerta .bloque{background:var(--pantalla)}
+.chyron.alerta .cargo{color:rgba(255,255,255,.85)}
+.chyron.alerta:hover,.chyron.alerta:focus-visible{box-shadow:-5px 0 0 0 var(--pantalla)}
+
+.triaje{display:flex;flex-direction:column;gap:11px;margin-top:34px}
+.panel{display:none;border:1px solid var(--borde);border-top:0;
+  border-radius:0 0 var(--r) var(--r);padding:22px 20px 24px;background:var(--humo);
+  margin-top:-11px}
+.panel.abierto{display:block;animation:entrar .22s ease}
+@keyframes entrar{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.panel .et{font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:10.5px;
+  color:var(--senal);margin-bottom:11px}
+.panel .et.rojo{color:var(--aire)}
+.panel ul{list-style:none;margin-bottom:20px}
+.panel ul:last-child{margin-bottom:0}
+.panel li{position:relative;padding:8px 0 8px 24px;font-size:15.5px;line-height:1.52;
+  border-top:1px solid var(--borde)}
+.panel li:first-child{border-top:0}
+.panel li::before{content:"";position:absolute;left:0;top:17px;width:11px;height:2px;
+  background:var(--aire)}
+.panel b{font-weight:700}
+
+/* ============ secciones ============ */
+section{padding:62px 0}
+section.oscuro{background:var(--pantalla);color:#fff}
+section.oscuro .sec-sub{color:rgba(255,255,255,.66)}
+.sec-cab{border-left:var(--chyron-h) solid var(--aire);padding-left:16px}
+.sec-cab .rotulo{color:var(--aire);margin-bottom:9px}
+
+/* ============ quiz ============ */
+.quiz{margin-top:34px}
+.q{border:1px solid var(--borde);border-radius:var(--r);padding:22px 20px;margin-bottom:13px;
+  background:var(--papel)}
+section.oscuro .q{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.16)}
+.q .num{font-weight:700;letter-spacing:.15em;text-transform:uppercase;font-size:10.5px;
+  color:var(--aire);margin-bottom:9px}
+.q .preg{font-weight:700;font-size:1.05rem;line-height:1.36;letter-spacing:-.008em}
+.ops{display:flex;flex-direction:column;gap:8px;margin-top:15px}
+.op{text-align:left;font-family:inherit;font-size:15px;line-height:1.42;
+  padding:12px 15px;border:1px solid var(--borde);background:var(--papel);
+  color:var(--tinta);border-radius:var(--r);cursor:pointer;
+  transition:border-color .15s ease,background .15s ease}
+section.oscuro .op{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.2);color:#fff}
+.op:hover:not(:disabled){border-color:var(--senal)}
+section.oscuro .op:hover:not(:disabled){border-color:#fff}
+.op:focus-visible{outline:3px solid var(--aire);outline-offset:2px}
+.op:disabled{cursor:default}
+.op.bien{border-color:var(--senal);background:var(--senal);color:#fff;font-weight:700}
+.op.mal{border-color:var(--aire);background:var(--aire);color:#fff;font-weight:700}
+.op.era{border-color:var(--senal);border-width:2px;font-weight:700}
+section.oscuro .op.era{border-color:#fff;color:#fff}
+.expl{display:none;margin-top:14px;padding:14px 16px;border-left:var(--chyron-h) solid var(--aire);
+  background:var(--humo);font-size:15px;line-height:1.55;border-radius:0 var(--r) var(--r) 0}
+section.oscuro .expl{background:rgba(255,255,255,.06)}
+.expl.ver{display:block}
+.marcador{margin-top:26px;padding:22px;border:1px solid var(--borde);border-radius:var(--r);
+  text-align:center;display:none}
+section.oscuro .marcador{border-color:rgba(255,255,255,.2)}
+.marcador.ver{display:block}
+.marcador .n{font-weight:700;font-size:3.1rem;letter-spacing:-.04em;line-height:1}
+.marcador .t{color:var(--niebla);margin-top:7px;font-size:15px}
+section.oscuro .marcador .t{color:rgba(255,255,255,.66)}
+
+/* ============ reporte + descarga ============ */
+.caja{border:1px solid var(--borde);border-radius:var(--r);padding:26px 24px;margin-top:28px}
+.caja.pendiente{border-style:dashed;border-color:var(--aire)}
+.boton{display:inline-flex;align-items:center;gap:11px;background:var(--senal);color:#fff;
+  text-decoration:none;font-weight:700;font-size:15.5px;padding:15px 24px;border-radius:var(--r);
+  transition:transform .16s ease,box-shadow .16s ease;margin-top:22px}
+.boton:hover,.boton:focus-visible{transform:translateX(5px);box-shadow:-5px 0 0 0 var(--aire)}
+.boton:focus-visible{outline:3px solid var(--aire);outline-offset:3px}
+
+footer{background:var(--pantalla);color:rgba(255,255,255,.5);padding:36px 0;font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
+footer b{color:#fff;font-weight:700}
+
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+@media (max-width:560px){
+  .chyron .mas{flex-basis:38px}
+  section{padding:48px 0}
+}
 </style>
 </head>
 <body>
-  <div>
-    <div class="marca">ojo<span>.</span></div>
-    <p>Material de concienciación en ciberseguridad.</p>
-    <p>Muy pronto.</p>
-    <small>SecPro — Security Professionals</small>
+
+<div class="aire-bar">
+  <span class="punto" aria-hidden="true"></span>
+  <span>ojo.secpro.co</span>
+  <span class="sep"></span>
+  <span class="marca">SecPro</span>
+</div>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="rotulo" style="color:rgba(255,255,255,.6);margin-bottom:20px">Guía rápida · 10 segundos</p>
+    <h1 class="display">¿Algo te huele raro?</h1>
+    <p>Empieza por lo que te está pasando ahora mismo. Cada opción te da las señales
+       que importan y el paso siguiente. Nada más.</p>
   </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sec-cab">
+      <p class="rotulo">Qué te está pasando</p>
+      <h2>Elige la situación</h2>
+    </div>
+
+    <div class="triaje">
+
+      <!-- 1 -->
+      <button class="chyron" aria-expanded="false" aria-controls="p1">
+        <span class="bloque" aria-hidden="true"></span>
+        <span class="cuerpo">
+          <span class="nombre">Me llegó un correo raro</span>
+          <span class="cargo">Phishing · 5 señales y qué hacer</span>
+        </span>
+        <span class="mas" aria-hidden="true">+</span>
+      </button>
+      <div class="panel" id="p1">
+        <p class="et">Míralo en este orden</p>
+        <ul>
+          <li><b>La dirección, no el nombre.</b> El nombre que aparece lo escribe quien envía. Ábrelo y lee la dirección real.</li>
+          <li><b>El dominio, letra por letra.</b> Una letra cambiada, un guion de más, un punto donde no iba.</li>
+          <li><b>La prisa.</b> «Hoy vence», «antes de las 5». La urgencia existe para que no verifiques.</li>
+          <li><b>El enlace.</b> Pasa el cursor por encima y lee a dónde va de verdad. En el celular, mantén pulsado.</li>
+          <li><b>Lo que te pide.</b> Si pide usuario y contraseña, ya está: ninguna entidad legítima lo hace por correo.</li>
+        </ul>
+        <p class="et">Qué haces</p>
+        <ul>
+          <li>No uses su enlace. Abre el navegador y escribe tú la dirección que ya conoces.</li>
+          <li>Repórtalo aunque creas que es legítimo. Equivocarse al reportar no cuesta nada.</li>
+        </ul>
+      </div>
+
+      <!-- 2 -->
+      <button class="chyron" aria-expanded="false" aria-controls="p2">
+        <span class="bloque" aria-hidden="true"></span>
+        <span class="cuerpo">
+          <span class="nombre">Me escribió un jefe por Teams o WhatsApp</span>
+          <span class="cargo">Suplantación de directivos · cómo confirmarlo</span>
+        </span>
+        <span class="mas" aria-hidden="true">+</span>
+      </button>
+      <div class="panel" id="p2">
+        <p class="et">Lo que casi nadie sabe</p>
+        <ul>
+          <li><b>Nadie tiene que hackear nada.</b> Cualquiera con su propio Microsoft 365 puede escribirte por Teams, y el nombre que aparece lo escribe esa persona.</li>
+          <li><b>Busca la etiqueta «Externo».</b> Es pequeña y gris, y es la única pista que da la herramienta.</li>
+        </ul>
+        <p class="et">La secuencia que usan</p>
+        <ul>
+          <li>Primero algo cordial, solo para que respondas.</li>
+          <li>Después, confidencialidad: «no lo comentes todavía». El secreto existe para bloquear que verifiques.</li>
+          <li>Luego te sacan a WhatsApp, donde no quedan rastros corporativos.</li>
+          <li>Y solo entonces piden el archivo, el usuario o el pago.</li>
+        </ul>
+        <p class="et">Qué haces</p>
+        <ul>
+          <li><b>Verifica por otro canal. Nunca por donde llegó.</b> Llama al número que ya tenías o camina hasta el puesto.</li>
+          <li>Si te pide no contarlo, esa es justamente la razón para contarlo.</li>
+        </ul>
+      </div>
+
+      <!-- 3 -->
+      <button class="chyron" aria-expanded="false" aria-controls="p3">
+        <span class="bloque" aria-hidden="true"></span>
+        <span class="cuerpo">
+          <span class="nombre">Me llamaron o me dejaron una nota de voz</span>
+          <span class="cargo">Voz clonada · por qué sonar idéntico ya no prueba nada</span>
+        </span>
+        <span class="mas" aria-hidden="true">+</span>
+      </button>
+      <div class="panel" id="p3">
+        <p class="et">Lo que cambió</p>
+        <ul>
+          <li>Clonar una voz cuesta unos pocos dólares al mes y necesita segundos de audio.</li>
+          <li>Si la persona habla en público —radio, televisión, un video corporativo— el material ya está disponible.</li>
+          <li><b>Reconocer la voz dejó de ser una verificación.</b> Es solo una impresión.</li>
+        </ul>
+        <p class="et">Qué haces</p>
+        <ul>
+          <li>Cuelga y devuelve la llamada al número que ya tenías guardado. Nunca al que te acaban de dar.</li>
+          <li>Pacten una palabra clave de equipo, acordada en persona y nunca escrita en un chat.</li>
+          <li>Ninguna petición de dinero, claves o datos personales es válida solo por voz.</li>
+        </ul>
+      </div>
+
+      <!-- 4 -->
+      <button class="chyron" aria-expanded="false" aria-controls="p4">
+        <span class="bloque" aria-hidden="true"></span>
+        <span class="cuerpo">
+          <span class="nombre">Voy a pegar algo en una inteligencia artificial</span>
+          <span class="cargo">Protección de la información · qué sí y qué no</span>
+        </span>
+        <span class="mas" aria-hidden="true">+</span>
+      </button>
+      <div class="panel" id="p4">
+        <p class="et">Pégalo sin problema</p>
+        <ul>
+          <li>Texto que ya es público, ideas generales, ayuda con una redacción que no lleva datos.</li>
+        </ul>
+        <p class="et">Piénsalo dos veces</p>
+        <ul>
+          <li>Documentos internos sin datos personales. Si lo haces: cuenta corporativa, nunca la personal, y el historial desactivado.</li>
+        </ul>
+        <p class="et rojo">No lo pegues nunca</p>
+        <ul>
+          <li>Datos personales, cédulas, contratos, nómina, claves.</li>
+          <li>Material no emitido, cifras no publicadas, información de clientes o de talento.</li>
+        </ul>
+        <p class="et">Por qué importa</p>
+        <ul>
+          <li>Lo que pegas sale del control de la empresa y queda en un tercero que también puede ser vulnerado.</li>
+          <li>Y convierte un ataque genérico en uno dirigido: con nombres, cargos y montos reales.</li>
+          <li><b>Borrar el chat no deshace lo que ya salió.</b></li>
+        </ul>
+      </div>
+
+      <!-- 5 -->
+      <button class="chyron" aria-expanded="false" aria-controls="p5">
+        <span class="bloque" aria-hidden="true"></span>
+        <span class="cuerpo">
+          <span class="nombre">La IA me dio un dato y lo voy a usar</span>
+          <span class="cargo">Criterio digital · por qué suena tan seguro</span>
+        </span>
+        <span class="mas" aria-hidden="true">+</span>
+      </button>
+      <div class="panel" id="p5">
+        <p class="et">Lo que hay que entender</p>
+        <ul>
+          <li><b>La IA no tiene forma de decir «no sé».</b> Está construida para producir la continuación más plausible, no para saber.</li>
+          <li>Por eso una mentira le sale con la misma fluidez y la misma seguridad que una verdad.</li>
+          <li>El error ya no viene con faltas de ortografía. Viene bien escrito y con fuentes.</li>
+        </ul>
+        <p class="et">Qué haces</p>
+        <ul>
+          <li>Pídele las fuentes y <b>ábrelas una por una</b>. Las inventa con un formato impecable.</li>
+          <li>No le preguntes a la IA si la IA tiene razón. Verifica fuera.</li>
+          <li>Cifras, nombres propios, fechas y citas textuales: siempre contra la fuente original.</li>
+        </ul>
+      </div>
+
+      <!-- 6 · alerta -->
+      <button class="chyron alerta" aria-expanded="false" aria-controls="p6">
+        <span class="bloque" aria-hidden="true"></span>
+        <span class="cuerpo">
+          <span class="nombre">Ya hice clic. Ya di mis datos.</span>
+          <span class="cargo">Actúa ahora · las primeras horas lo son todo</span>
+        </span>
+        <span class="mas" aria-hidden="true">+</span>
+      </button>
+      <div class="panel" id="p6">
+        <p class="et rojo">En este orden, ya</p>
+        <ul>
+          <li><b>Reporta primero.</b> Antes de intentar arreglarlo tú. Lo que decide el daño no es el clic: es cuánto tiempo pasa entre el clic y el aviso.</li>
+          <li><b>Cambia la contraseña</b> desde otro dispositivo, y cámbiala en todos los sitios donde usabas la misma.</li>
+          <li><b>Cierra las sesiones abiertas.</b> Pídelo a tecnología: con tu contraseña se llevaron también la sesión, y esa salta el doble factor.</li>
+          <li><b>No borres nada.</b> El correo, el mensaje y la hora exacta son lo que permite entender el alcance.</li>
+          <li><b>Avisa a quien pueda recibir lo mismo.</b> Casi nunca llega a una sola persona.</li>
+        </ul>
+        <p class="et">Y esto</p>
+        <ul>
+          <li><b>Reportar no es confesar.</b> Caer en un engaño bien hecho no es un descuido, es lo que estaba diseñado para pasar. Lo único que sí es un problema es el silencio.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="oscuro">
+  <div class="wrap">
+    <div class="sec-cab">
+      <p class="rotulo">Ponte a prueba</p>
+      <h2>Ocho situaciones reales</h2>
+      <p class="sec-sub">No es un examen y no queda registrado. Responde y te explico al instante
+        por qué. Toma menos de tres minutos.</p>
+    </div>
+
+    <div class="quiz" id="quiz"></div>
+
+    <div class="marcador" id="marcador">
+      <div class="n" id="puntaje">0/8</div>
+      <div class="t" id="veredicto"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-cab">
+      <p class="rotulo">Si algo pasó</p>
+      <h2>A quién reportar</h2>
+      <p class="sec-sub">Guarda este dato en el celular hoy, no el día que lo necesites.</p>
+    </div>
+
+    <div class="caja pendiente">
+      <h3>Canal interno de reporte</h3>
+      <p style="margin-top:9px;color:var(--niebla)">
+        Pendiente de confirmar con la organización. Este bloque se reemplaza por el
+        correo, la extensión o el canal de Teams correspondiente antes de publicar.
+      </p>
+    </div>
+
+    <div class="sec-cab" style="margin-top:56px">
+      <p class="rotulo">Para el puesto</p>
+      <h2>Llévatelo en papel</h2>
+      <p class="sec-sub">Una página con las señales y los pasos. Imprímela y pégala donde la veas.</p>
+    </div>
+    <a class="boton" href="kit-ojo.pdf" download>Descargar el PDF <span aria-hidden="true">↓</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span><b>SecPro</b> — Security Professionals</span>
+    <span>ojo.secpro.co</span>
+  </div>
+</footer>
+
+<script>
+/* ---------- triaje ---------- */
+document.querySelectorAll('.chyron').forEach(function(b){
+  b.addEventListener('click',function(){
+    var p=document.getElementById(b.getAttribute('aria-controls'));
+    var abierto=b.getAttribute('aria-expanded')==='true';
+    b.setAttribute('aria-expanded',String(!abierto));
+    p.classList.toggle('abierto',!abierto);
+  });
+});
+
+/* ---------- quiz ---------- */
+var PREGUNTAS=[
+ {p:'Llega un correo de Microsoft avisando que tu contraseña vence hoy. El remitente es <b>no-reply@microsoft-seguridad.com</b> y trae un botón para renovarla.',
+  o:['Hacer clic en el botón: viene de Microsoft','Escribir yo mismo la dirección del portal en el navegador','Responder al correo para preguntar si es real'],c:1,
+  e:'El dominio es el delator: Microsoft no escribe desde <b>microsoft-seguridad.com</b>. Y responder no sirve, porque quien contesta es quien lo envió. Si de verdad hay algo que renovar, lo verás entrando por tu cuenta.'},
+
+ {p:'Tu director te escribe por Teams desde una cuenta con la etiqueta <b>(Externo)</b>. Es cordial, dice que está en reunión y te pide tu número de celular.',
+  o:['Dárselo: es Teams corporativo y aparece su nombre','No responder y verificar por otro canal antes','Darle el número pero no más datos'],c:1,
+  e:'El nombre que aparece en Teams lo escribe quien envía, y el acceso externo permite que cualquiera con su propio Microsoft 365 te escriba. Pedir el celular es el tercer paso del guion: sacarte a un canal sin rastro. Verifica por donde no llegó.'},
+
+ {p:'Necesitas resumir un contrato con un proveedor. Tiene nombres, cédulas y valores. Piensas pegarlo en ChatGPT desde tu cuenta personal.',
+  o:['Sí, si borro el chat después','Sí, es solo un resumen y no lo comparto','No: lleva datos personales y sale del control de la empresa'],c:2,
+  e:'Borrar el chat no deshace lo que ya salió del perímetro. Un contrato con cédulas y valores es dato personal con ley encima, y en una cuenta personal queda fuera de cualquier control de la empresa.'},
+
+ {p:'Recibes una nota de voz de un directivo. La voz es inconfundiblemente suya. Suena apurado y pide que le envíes un archivo interno ya mismo.',
+  o:['Enviarlo: reconozco perfectamente su voz','Responder por la misma nota de voz para confirmar','Llamarlo al número que ya tenía guardado'],c:2,
+  e:'Clonar una voz cuesta unos dólares y necesita segundos de audio público. Reconocer la voz dejó de ser una verificación. Y confirmar por el mismo canal es confirmárselo al atacante: devuelve la llamada al número que ya tenías.'},
+
+ {p:'Un enlace en un correo dice <b>portal.caracoltv.com</b>, pero al pasar el cursor por encima abajo aparece otra dirección distinta.',
+  o:['Es normal: así funcionan los enlaces de seguimiento','El texto es decorado; lo que vale es a dónde va de verdad','Depende de si el correo tiene logo oficial'],c:1,
+  e:'El texto visible de un enlace es solo texto: se escribe lo que se quiera. Lo único real es el destino. Y el logo no prueba nada — copiarlo toma diez segundos.'},
+
+ {p:'Hiciste clic en un enlace y escribiste tu usuario y contraseña. A los dos minutos te diste cuenta de que era falso.',
+  o:['Reportar de inmediato, antes de ponerme a arreglarlo','Cambiar la contraseña y no decir nada para evitar el problema','Esperar a ver si pasa algo raro'],c:0,
+  e:'El daño no lo decide el clic, lo decide el tiempo entre el clic y el aviso. Cambiar la contraseña tú solo no basta: con la sesión robada el atacante sigue dentro, y cerrarla requiere a tecnología. Reportar no es confesar.'},
+
+ {p:'Le pediste a una IA una cifra de audiencia y te la dio citando un informe con nombre, año y número de página. Lo necesitas para un documento que sale hoy.',
+  o:['Usarla: la fuente está citada con todo detalle','Preguntarle a la misma IA si la fuente es real','Buscar el informe original y comprobarlo'],c:2,
+  e:'Las citas inventadas son el error más común y el más convincente, porque salen con formato impecable. Preguntarle a la IA si tiene razón no sirve: en el caso Mata contra Avianca, el abogado lo hizo y le dijo que sí. Fue sancionado.'},
+
+ {p:'Tienes el doble factor activado en tu cuenta. Caes en un portal falso y escribes usuario, contraseña y también el código que te llegó.',
+  o:['Estoy protegido: el código es de un solo uso','No estoy protegido: también se llevaron la sesión','Depende de si el código era por SMS o por app'],c:1,
+  e:'Cuando apruebas el código, el sistema entrega una sesión que dice «esta persona ya se validó». Si el atacante está en medio, se queda con esa sesión y entra sin que le pidan nada más. El doble factor protege la puerta, no a quien te acompaña al entrar.'}
+];
+
+var cont=document.getElementById('quiz'), respondidas=0, aciertos=0;
+
+PREGUNTAS.forEach(function(q,i){
+  var d=document.createElement('div'); d.className='q';
+  var ops=q.o.map(function(t,j){
+    return '<button class="op" data-q="'+i+'" data-o="'+j+'">'+t+'</button>';
+  }).join('');
+  d.innerHTML='<div class="num">Situación '+(i+1)+' de 8</div>'+
+    '<div class="preg">'+q.p+'</div>'+
+    '<div class="ops">'+ops+'</div>'+
+    '<div class="expl" id="e'+i+'">'+q.e+'</div>';
+  cont.appendChild(d);
+});
+
+cont.addEventListener('click',function(ev){
+  var b=ev.target.closest('.op'); if(!b||b.disabled) return;
+  var qi=+b.dataset.q, oi=+b.dataset.o, q=PREGUNTAS[qi];
+  var grupo=b.parentElement.querySelectorAll('.op');
+  grupo.forEach(function(x){ x.disabled=true; });
+  if(oi===q.c){ b.classList.add('bien'); aciertos++; }
+  else{ b.classList.add('mal'); grupo[q.c].classList.add('era'); }
+  document.getElementById('e'+qi).classList.add('ver');
+  respondidas++;
+  if(respondidas===PREGUNTAS.length){
+    var m=document.getElementById('marcador');
+    document.getElementById('puntaje').textContent=aciertos+'/8';
+    document.getElementById('veredicto').textContent =
+      aciertos>=7 ? 'Buen criterio. Ahora guarda el canal de reporte en el celular.'
+      : aciertos>=4 ? 'Vas bien, y las que fallaste son justo las que usan a diario.'
+      : 'Vale la pena releer las situaciones de arriba. Para eso están.';
+    m.classList.add('ver');
+  }
+});
+</script>
 </body>
 </html>

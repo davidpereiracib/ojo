@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>ojo · Para el puesto</title>
+<style>
+@font-face{font-family:"Segoe UI";src:url("file:///Users/dfpluc1/Library/Fonts/segoeui.ttf")format("truetype");font-weight:400}
+@font-face{font-family:"Segoe UI";src:url("file:///Users/dfpluc1/Library/Fonts/segoeuib.ttf")format("truetype");font-weight:700}
+@font-face{font-family:"Segoe UI";src:url("file:///Users/dfpluc1/Library/Fonts/segoeuisl.ttf")format("truetype");font-weight:350}
+:root{--senal:#001D7E;--aire:#FF0000;--tinta:#10172E;--niebla:#5C6478;--borde:#D5DCEC;--humo:#F2F5FB}
+*{box-sizing:border-box;margin:0;padding:0}
+@page{size:A4 portrait;margin:0}
+body{font-family:"Segoe UI",sans-serif;font-weight:350;color:var(--tinta);
+  font-size:8.7pt;line-height:1.32;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.hoja{width:210mm;height:297mm;padding:11mm 11mm 7mm;display:flex;flex-direction:column;overflow:hidden}
+
+.cab{background:var(--senal);color:#fff;padding:5.4mm 7mm;border-bottom:1.3mm solid var(--aire);
+  margin:-11mm -11mm 5mm;display:flex;align-items:flex-end;justify-content:space-between;gap:8mm}
+.cab h1{font-size:21pt;font-weight:700;letter-spacing:-.03em;line-height:.98}
+.cab .sub{font-size:9.4pt;color:rgba(255,255,255,.82);margin-top:2.6mm;max-width:95mm}
+.cab .url{font-size:8pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  text-align:right;white-space:nowrap}
+.cab .url small{display:block;font-weight:350;letter-spacing:.06em;opacity:.6;margin-top:1.4mm;
+  font-size:7pt;text-transform:none}
+
+.cols{display:flex;gap:5mm;flex:1}
+.col{flex:1;display:flex;flex-direction:column;gap:3.2mm}
+
+.bloque{border:.3mm solid var(--borde);border-left:1.3mm solid var(--senal);padding:2.8mm 3.4mm}
+.bloque.rojo{border-left-color:var(--aire);background:#FFF4F4;border-color:#F3C9C9}
+.bloque h2{font-size:10.2pt;font-weight:700;letter-spacing:-.01em;line-height:1.16}
+.bloque .et{font-size:6.6pt;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--aire);margin-bottom:1.6mm}
+ul{list-style:none;margin-top:2.4mm}
+li{position:relative;padding:1.5mm 0 1.5mm 4.2mm;border-top:.25mm solid var(--borde)}
+li:first-child{border-top:0;padding-top:0}
+li::before{content:"";position:absolute;left:0;top:3.1mm;width:2.4mm;height:.6mm;background:var(--aire)}
+li:first-child::before{top:1.6mm}
+b{font-weight:700}
+
+.regla{background:var(--senal);color:#fff;padding:3.4mm 4.4mm;margin-top:3.2mm}
+.regla .et{color:#fff;opacity:.62;font-size:6.6pt;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase;margin-bottom:1.8mm}
+.regla p{font-size:12pt;font-weight:700;letter-spacing:-.015em;line-height:1.2}
+.regla small{display:block;font-weight:350;font-size:8.4pt;margin-top:2.2mm;
+  color:rgba(255,255,255,.8);line-height:1.38}
+
+.reporte{border:.5mm dashed var(--aire);padding:3mm 4mm;text-align:center}
+.reporte .et{color:var(--aire);font-size:6.6pt;font-weight:700;letter-spacing:.16em;
+  text-transform:uppercase}
+.reporte .dato{font-size:13pt;font-weight:700;margin-top:2mm;letter-spacing:-.02em}
+.reporte small{display:block;color:var(--niebla);font-size:7.6pt;margin-top:1.6mm}
+
+.tres{display:flex;gap:3mm;margin-top:1mm}
+.tres div{flex:1;border-top:1mm solid var(--aire);padding-top:2.4mm}
+.tres .n{font-size:9.6pt;font-weight:700;letter-spacing:-.01em}
+.tres p{font-size:7.8pt;color:var(--niebla);margin-top:1mm;line-height:1.32}
+
+.pie{margin-top:3.4mm;padding-top:2.4mm;border-top:.3mm solid var(--borde);
+  display:flex;justify-content:space-between;font-size:7.2pt;color:var(--niebla)}
+.pie b{color:var(--tinta)}
+</style>
+</head>
+<body>
+<div class="hoja">
+
+  <div class="cab">
+    <div>
+      <h1>¿Algo te huele raro?</h1>
+      <p class="sub">Las señales que importan, qué hacer si ya pasó y a quién avisar.
+        Pégalo donde lo veas.</p>
+    </div>
+    <div class="url">ojo.secpro.co<small>Quiz y guía completa</small></div>
+  </div>
+
+  <div class="cols">
+
+    <div class="col">
+
+      <div class="bloque">
+        <p class="et">Un correo</p>
+        <h2>Míralo en este orden</h2>
+        <ul>
+          <li><b>La dirección, no el nombre.</b> El nombre que aparece lo escribe quien envía.</li>
+          <li><b>El dominio, letra por letra.</b> Una letra cambiada o un guion de más.</li>
+          <li><b>La prisa.</b> La urgencia existe para que no verifiques.</li>
+          <li><b>El enlace.</b> Pasa el cursor y lee a dónde va. El texto visible no prueba nada.</li>
+          <li><b>Si pide usuario y contraseña, ya está.</b> Ninguna entidad legítima lo hace por correo.</li>
+        </ul>
+      </div>
+
+      <div class="bloque">
+        <p class="et">Un jefe por Teams o WhatsApp</p>
+        <h2>Nadie tuvo que hackear nada</h2>
+        <ul>
+          <li>Cualquiera con su propio Microsoft 365 puede escribirte, y <b>el nombre que aparece lo escribe esa persona</b>.</li>
+          <li>Busca la etiqueta <b>(Externo)</b>. Es pequeña y gris, y es la única pista.</li>
+          <li>El guion: algo cordial → «no lo comentes» → sácate a WhatsApp → recién ahí pide.</li>
+          <li><b>Si te pide no contarlo, esa es la razón para contarlo.</b></li>
+        </ul>
+      </div>
+
+      <div class="bloque">
+        <p class="et">Una llamada o una nota de voz</p>
+        <h2>Reconocer la voz ya no es verificar</h2>
+        <ul>
+          <li>Clonar una voz cuesta unos dólares y necesita segundos de audio público.</li>
+          <li>Cuelga y <b>devuelve la llamada al número que ya tenías</b>. Nunca al que te dieron.</li>
+          <li>Pacten una palabra clave de equipo, en persona y nunca escrita en un chat.</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="col">
+
+      <div class="bloque">
+        <p class="et">Antes de pegar algo en una IA</p>
+        <h2>Qué sí y qué no</h2>
+        <ul>
+          <li><b>Sin problema:</b> texto ya público, ideas generales, redacción sin datos.</li>
+          <li><b>Piénsalo:</b> documentos internos sin datos personales. Cuenta corporativa e historial desactivado.</li>
+          <li><b>Nunca:</b> datos personales, cédulas, contratos, nómina, claves, material no emitido, cifras no publicadas.</li>
+          <li><b>Borrar el chat no deshace lo que ya salió.</b></li>
+        </ul>
+      </div>
+
+      <div class="bloque">
+        <p class="et">Antes de usar un dato que te dio la IA</p>
+        <h2>No sabe que no sabe</h2>
+        <ul>
+          <li>Produce la continuación más plausible, no la verdad. Una mentira le sale igual de fluida.</li>
+          <li>Pídele las fuentes y <b>ábrelas una por una</b>. Las inventa con formato impecable.</li>
+          <li><b>No le preguntes a la IA si la IA tiene razón.</b> Verifica fuera.</li>
+        </ul>
+      </div>
+
+      <div class="bloque rojo">
+        <p class="et">Ya hice clic · ya di mis datos</p>
+        <h2>En este orden, ya</h2>
+        <ul>
+          <li><b>Reporta primero</b>, antes de intentar arreglarlo tú.</li>
+          <li><b>Cambia la contraseña</b> desde otro dispositivo, y donde usaras la misma.</li>
+          <li><b>Pide que cierren tus sesiones.</b> Con la sesión robada, el doble factor no frena nada.</li>
+          <li><b>No borres nada.</b> El mensaje y la hora exacta son lo que permite medir el alcance.</li>
+          <li><b>Avisa a quien pueda recibir lo mismo.</b> Casi nunca llega a una sola persona.</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="regla">
+    <p class="et">La regla que lo desarma todo</p>
+    <p>Nunca verifiques por el mismo canal por el que llegó la petición.</p>
+    <small>Si llegó por Teams, no lo confirmes por Teams. Llama al número que ya tenías, no al que te acaban de dar.
+      Ninguna petición de dinero, claves o datos personales es válida solo por voz o por chat.</small>
+  </div>
+
+  <div class="tres" style="margin-top:3.2mm">
+    <div><p class="n">Dudar</p><p>Prisa, secreto o una excepción al procedimiento: esas tres cosas son la señal.</p></div>
+    <div><p class="n">Verificar por otro canal</p><p>Nunca por donde llegó. Llama, camina, pregunta por otro lado.</p></div>
+    <div><p class="n">Reportar</p><p>Aunque no estés seguro. Sobre todo si ya hiciste clic: las primeras horas lo son todo.</p></div>
+  </div>
+
+  <div class="reporte" style="margin-top:3.2mm">
+    <p class="et">Canal interno de reporte</p>
+    <p class="dato">Pendiente de confirmar</p>
+    <small>Reportar no es confesar. Caer en un engaño bien hecho es lo que estaba diseñado para pasar;
+      lo único que sí es un problema es el silencio.</small>
+  </div>
+
+  <div class="pie">
+    <span><b>SecPro</b> — Security Professionals</span>
+    <span>ojo.secpro.co</span>
+  </div>
+
+</div>
+</body>
+</html>
