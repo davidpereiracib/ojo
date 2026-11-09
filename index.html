@@ -181,13 +181,27 @@ footer b{color:#fff;font-weight:700}
   display:flex;align-items:center;justify-content:center}
 .demo-btn:hover{background:rgba(255,255,255,.16)}
 .demo-btn:focus-visible{outline:3px solid var(--aire);outline-offset:2px}
-/* alto mínimo: si no, la caja cambia de tamaño en cada paso y el diseño salta */
-.demo-exp{padding:14px 16px;border-top:1px solid var(--borde);
-  border-left:var(--chyron-h) solid var(--aire);background:var(--humo);
-  font-size:14.5px;line-height:1.5;min-height:9.4em}
-.demo-exp .n{display:inline-block;background:var(--aire);color:#fff;font-weight:700;
+/* El globo va pegado a la zona señalada y le apunta con una flecha. Antes la
+   explicación estaba al final del cuadro y se perdía la relación entre lo
+   resaltado y lo que se dice de ello. */
+.globo{position:absolute;left:12px;right:12px;top:0;z-index:8;
+  background:var(--pantalla);color:#fff;padding:13px 15px 14px;
+  border-left:var(--chyron-h) solid var(--aire);border-radius:0 var(--r) var(--r) 0;
+  font-size:14px;line-height:1.46;box-shadow:0 8px 26px rgba(7,11,24,.34);
+  transition:top .34s cubic-bezier(.33,0,.2,1),opacity .2s ease}
+.globo b{font-weight:700}
+.globo .n{display:inline-block;background:var(--aire);color:#fff;font-weight:700;
   font-size:11px;width:19px;height:19px;border-radius:50%;text-align:center;
   line-height:19px;margin-right:8px}
+.flecha{position:absolute;width:0;height:0;border:9px solid transparent;
+  transition:left .34s cubic-bezier(.33,0,.2,1)}
+.globo.abajo .flecha{top:-18px;border-bottom-color:var(--pantalla)}
+.globo.arriba .flecha{bottom:-18px;border-top-color:var(--pantalla)}
+/* en ancho, a lo largo entero señala mal: se acota y se centra sobre la zona */
+@media (min-width:700px){
+  .globo{right:auto;width:min(520px,calc(100% - 24px));
+    transition:top .34s cubic-bezier(.33,0,.2,1),left .34s cubic-bezier(.33,0,.2,1)}
+}
 .escena{position:relative;background:#FAFBFD;font-size:13px;line-height:1.45}
 .escena [data-z]{transition:opacity .3s ease,box-shadow .25s ease;border-radius:2px}
 .escena.enfoca [data-z]:not(.activa){opacity:.38}
@@ -259,9 +273,6 @@ footer b{color:#fff;font-weight:700}
   .chyron .mas{flex-basis:38px}
   section{padding:48px 0}
 }
-/* el alto mínimo evita saltos en el celular; en pantalla ancha el texto
-   ocupa la mitad de líneas y ese mismo mínimo dejaría un hueco */
-@media (min-width:700px){ .demo-exp{min-height:5.2em} }
 </style>
 </head>
 <body>
@@ -354,9 +365,12 @@ footer b{color:#fff;font-weight:700}
               Mensaje automático, por favor no responda a esta dirección.</p>
 
             <span class="c-estado">https://acceso-tuempresa.verificacion-id.net/login</span>
-          </div>
 
-          <p class="demo-exp" aria-live="polite" role="status"></p>
+            <div class="globo">
+              <span class="flecha" aria-hidden="true"></span>
+              <p class="globo-txt" aria-live="polite" role="status"></p>
+            </div>
+          </div>
         </div>
 
         <p class="et">Qué haces</p>
@@ -427,9 +441,12 @@ footer b{color:#fff;font-weight:700}
                 el mío está bloqueado. <span class="h">8:11 a. m.</span></div>
               <div class="escribiendo" aria-hidden="true"><i></i><i></i><i></i></div>
             </div>
-          </div>
 
-          <p class="demo-exp" aria-live="polite" role="status"></p>
+            <div class="globo">
+              <span class="flecha" aria-hidden="true"></span>
+              <p class="globo-txt" aria-live="polite" role="status"></p>
+            </div>
+          </div>
         </div>
 
         <p class="et">Qué haces</p>
@@ -616,11 +633,42 @@ function Recorrido(id,modo,pasos){
   var zonas=[].slice.call(raiz.querySelectorAll('[data-z]'));
   var hilo=raiz.querySelector('.chat-hilo');
   var esc=raiz.querySelector('.escribiendo');
-  var expl=raiz.querySelector('.demo-exp');
+  var globo=raiz.querySelector('.globo');
+  var flecha=raiz.querySelector('.flecha');
+  var expl=raiz.querySelector('.globo-txt');
   var cuenta=raiz.querySelector('.paso-n b');
   var barra=raiz.querySelector('.barra i');
   var bPausa=raiz.querySelector('[data-acc="pausa"]');
   var i=0,reloj=null,tecla=null,corriendo=false,DUR=7000;
+
+  /* Coloca el globo junto a la zona activa y apunta la flecha hacia ella.
+     Prefiere ponerlo debajo; si no cabe, lo pasa arriba y le da la vuelta
+     a la flecha. En el chat reserva un carril al final del hilo, porque el
+     mensaje activo es siempre el último y tapar los anteriores
+     arruinaría justo lo que hay que ver: la secuencia. */
+  function colocarGlobo(){
+    if(!globo) return;
+    var zona=null;
+    zonas.forEach(function(el){ if(el.classList.contains('activa')) zona=el; });
+    if(!zona) return;
+    if(modo==='acumula') escena.style.paddingBottom=(globo.offsetHeight+22)+'px';
+    var e=escena.getBoundingClientRect(), z=zona.getBoundingClientRect();
+    var alto=globo.offsetHeight;
+    var bordeInf=z.bottom-e.top, bordeSup=z.top-e.top;
+    var cabeAbajo=(escena.clientHeight-bordeInf)>=alto+20;
+    globo.classList.toggle('abajo',cabeAbajo);
+    globo.classList.toggle('arriba',!cabeAbajo);
+    globo.style.top=(cabeAbajo?bordeInf+12:Math.max(6,bordeSup-alto-12))+'px';
+    // si el globo no ocupa todo el ancho (pantalla grande), se centra sobre
+    // la zona en vez de quedarse pegado a la izquierda
+    var ancho=globo.offsetWidth, centroZona=(z.left+z.width/2)-e.left;
+    if(ancho<escena.clientWidth-25)
+      globo.style.left=Math.max(12,Math.min(escena.clientWidth-ancho-12,centroZona-ancho/2))+'px';
+    // y la flecha se alinea con el centro de la zona, sin salirse del globo
+    var g=globo.getBoundingClientRect();
+    flecha.style.left=Math.max(18,Math.min(g.width-18,(z.left+z.width/2)-g.left))+'px';
+  }
+  addEventListener('resize',colocarGlobo,{passive:true});
 
   function barraCorre(on){
     if(!barra) return;
@@ -640,6 +688,7 @@ function Recorrido(id,modo,pasos){
     expl.innerHTML='<span class="n">'+(i+1)+'</span>'+p.t;
     cuenta.textContent=i+1;
     if(hilo) hilo.scrollTop=hilo.scrollHeight;
+    colocarGlobo();
     barraCorre(corriendo);
   }
   function limpiar(){
