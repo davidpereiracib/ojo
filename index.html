@@ -188,11 +188,21 @@ footer b{color:#fff;font-weight:700}
   background:var(--pantalla);color:#fff;padding:13px 15px 14px;
   border-left:var(--chyron-h) solid var(--aire);border-radius:0 var(--r) var(--r) 0;
   font-size:14px;line-height:1.46;box-shadow:0 8px 26px rgba(7,11,24,.34);
-  transition:top .34s cubic-bezier(.33,0,.2,1),opacity .2s ease}
+  transition:top .34s cubic-bezier(.33,0,.2,1) .2s,opacity .2s ease .2s}
 .globo b{font-weight:700}
 .globo .n{display:inline-block;background:var(--aire);color:#fff;font-weight:700;
   font-size:11px;width:19px;height:19px;border-radius:50%;text-align:center;
   line-height:19px;margin-right:8px}
+/* El cursor viaja hasta la zona y llega antes que el globo: primero lleva
+   la mirada, después aparece el texto. Por eso el globo entra con retardo. */
+.cursor{position:absolute;left:0;top:0;z-index:9;pointer-events:none;
+  transition:left .62s cubic-bezier(.45,.05,.2,1),top .62s cubic-bezier(.45,.05,.2,1);
+  filter:drop-shadow(0 2px 5px rgba(7,11,24,.5))}
+.cursor svg{display:block}
+.cursor::before{content:"";position:absolute;left:-10px;top:-10px;width:32px;height:32px;
+  border-radius:50%;border:2px solid var(--aire);opacity:0}
+.cursor.llega::before{animation:halo .75s ease-out .5s}
+@keyframes halo{0%{transform:scale(.35);opacity:.95}100%{transform:scale(1.6);opacity:0}}
 .flecha{position:absolute;width:0;height:0;border:9px solid transparent;
   transition:left .34s cubic-bezier(.33,0,.2,1)}
 .globo.abajo .flecha{top:-18px;border-bottom-color:var(--pantalla)}
@@ -200,7 +210,7 @@ footer b{color:#fff;font-weight:700}
 /* en ancho, a lo largo entero señala mal: se acota y se centra sobre la zona */
 @media (min-width:700px){
   .globo{right:auto;width:min(520px,calc(100% - 24px));
-    transition:top .34s cubic-bezier(.33,0,.2,1),left .34s cubic-bezier(.33,0,.2,1)}
+    transition:top .34s cubic-bezier(.33,0,.2,1) .2s,left .34s cubic-bezier(.33,0,.2,1) .2s}
 }
 .escena{position:relative;background:#FAFBFD;font-size:13px;line-height:1.45}
 .escena [data-z]{transition:opacity .3s ease,box-shadow .25s ease;border-radius:2px}
@@ -225,11 +235,18 @@ footer b{color:#fff;font-weight:700}
   padding:10px 20px;border-radius:var(--r);margin:10px 0;font-size:13px}
 .c-firma{margin-top:14px;padding-top:10px;border-top:1px solid var(--borde);
   font-size:11.5px;color:var(--niebla)}
-.c-estado{position:absolute;left:0;bottom:0;z-index:5;max-width:96%;
-  background:var(--pantalla);color:#fff;font-size:11.5px;padding:7px 11px;
-  border-radius:0 var(--r) 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  opacity:0;pointer-events:none;transform:translateY(115%);
+/* Va en claro y con anillo rojo a propósito: el globo es oscuro, y si esta
+   barra también lo fuera se leerían como un solo bloque. Esto es el destino
+   del enlace —parte del navegador—, no la explicación. */
+.c-estado{position:absolute;left:10px;bottom:10px;z-index:6;max-width:calc(100% - 20px);
+  background:var(--papel);color:var(--tinta);font-weight:700;
+  font-size:11.5px;padding:7px 11px;border-radius:var(--r);
+  box-shadow:0 0 0 2px var(--aire),0 5px 16px rgba(7,11,24,.22);
+  overflow-wrap:anywhere;line-height:1.35;
+  opacity:0;pointer-events:none;transform:translateY(125%);
   transition:transform .35s ease,opacity .25s ease}
+.c-estado b{display:block;font-weight:700;font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--aire);margin-bottom:2px}
 .escena.ve-estado .c-estado{opacity:1;transform:none}
 
 /* --- maqueta de chat --- */
@@ -364,8 +381,9 @@ footer b{color:#fff;font-weight:700}
             <p class="c-firma" data-z="0">Dirección de Seguridad de la Información · Tu Empresa S. A.<br>
               Mensaje automático, por favor no responda a esta dirección.</p>
 
-            <span class="c-estado">https://acceso-tuempresa.verificacion-id.net/login</span>
+            <span class="c-estado"><b>A dónde va de verdad</b>https://acceso-tuempresa.verificacion-id.net/login</span>
 
+            <span class="cursor" aria-hidden="true"><svg viewBox="0 0 20 22" width="20" height="22"><path d="M2 1.5 L2 17.5 L6.2 13.6 L8.9 19.9 L12 18.6 L9.3 12.5 L15 12.4 Z" fill="#fff" stroke="#070B18" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
             <div class="globo">
               <span class="flecha" aria-hidden="true"></span>
               <p class="globo-txt" aria-live="polite" role="status"></p>
@@ -442,6 +460,7 @@ footer b{color:#fff;font-weight:700}
               <div class="escribiendo" aria-hidden="true"><i></i><i></i><i></i></div>
             </div>
 
+            <span class="cursor" aria-hidden="true"><svg viewBox="0 0 20 22" width="20" height="22"><path d="M2 1.5 L2 17.5 L6.2 13.6 L8.9 19.9 L12 18.6 L9.3 12.5 L15 12.4 Z" fill="#fff" stroke="#070B18" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
             <div class="globo">
               <span class="flecha" aria-hidden="true"></span>
               <p class="globo-txt" aria-live="polite" role="status"></p>
@@ -635,6 +654,7 @@ function Recorrido(id,modo,pasos){
   var esc=raiz.querySelector('.escribiendo');
   var globo=raiz.querySelector('.globo');
   var flecha=raiz.querySelector('.flecha');
+  var cursor=raiz.querySelector('.cursor');
   var expl=raiz.querySelector('.globo-txt');
   var cuenta=raiz.querySelector('.paso-n b');
   var barra=raiz.querySelector('.barra i');
@@ -646,6 +666,16 @@ function Recorrido(id,modo,pasos){
      a la flecha. En el chat reserva un carril al final del hilo, porque el
      mensaje activo es siempre el último y tapar los anteriores
      arruinaría justo lo que hay que ver: la secuencia. */
+  /* Lleva el cursor hasta la zona. Apunta al centro vertical y, en zonas
+     anchas, cerca del principio del texto, que es por donde se empieza a leer. */
+  function moverCursor(z,e){
+    if(!cursor) return;
+    cursor.style.left=Math.round(z.left-e.left+Math.min(z.width/2,52))+'px';
+    cursor.style.top =Math.round(z.top-e.top+z.height/2)+'px';
+    cursor.classList.remove('llega'); void cursor.offsetWidth;
+    if(!REDUCE) cursor.classList.add('llega');
+  }
+
   function colocarGlobo(){
     if(!globo) return;
     var zona=null;
@@ -653,9 +683,18 @@ function Recorrido(id,modo,pasos){
     if(!zona) return;
     if(modo==='acumula') escena.style.paddingBottom=(globo.offsetHeight+22)+'px';
     var e=escena.getBoundingClientRect(), z=zona.getBoundingClientRect();
+    moverCursor(z,e);
     var alto=globo.offsetHeight;
     var bordeInf=z.bottom-e.top, bordeSup=z.top-e.top;
-    var cabeAbajo=(escena.clientHeight-bordeInf)>=alto+20;
+    // la barra del enlace es un obstáculo: si el globo se le pega, se leen
+    // como un solo bloque. Se reserva aire y el globo se va arriba.
+    var fondo=escena.clientHeight;
+    var est=escena.querySelector('.c-estado');
+    // su posición de reposo, no la del momento: cuando esto corre todavía
+    // está deslizándose y getBoundingClientRect devuelve dónde venía
+    if(est&&escena.classList.contains('ve-estado'))
+      fondo=Math.min(fondo,escena.clientHeight-10-est.offsetHeight-16);
+    var cabeAbajo=(fondo-bordeInf)>=alto+20;
     globo.classList.toggle('abajo',cabeAbajo);
     globo.classList.toggle('arriba',!cabeAbajo);
     globo.style.top=(cabeAbajo?bordeInf+12:Math.max(6,bordeSup-alto-12))+'px';
