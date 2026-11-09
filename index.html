@@ -6,6 +6,7 @@
 <title>ojo · ¿Algo te huele raro?</title>
 <meta name="description" content="Qué mirar antes de hacer clic, qué hacer si ya pasó y a quién reportar. Material de concienciación de SecPro.">
 <meta name="theme-color" content="#001D7E">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23001D7E'/><circle cx='16' cy='16' r='7.5' fill='%23FF0000'/></svg>">
 <style>
 /* ============ tokens ============ */
 :root{
@@ -134,10 +135,32 @@ section.oscuro .op{background:rgba(255,255,255,.05);border-color:rgba(255,255,25
 section.oscuro .op:hover:not(:disabled){border-color:#fff}
 .op:focus-visible{outline:3px solid var(--aire);outline-offset:2px}
 .op:disabled{cursor:default}
-.op.bien{border-color:var(--senal);background:var(--senal);color:#fff;font-weight:700}
-.op.mal{border-color:var(--aire);background:var(--aire);color:#fff;font-weight:700}
-.op.era{border-color:var(--senal);border-width:2px;font-weight:700}
-section.oscuro .op.era{border-color:#fff;color:#fff}
+/* Rojo = lo que marcaste y estaba mal. Azul con tilde = la correcta.
+   Van repetidas bajo «section.oscuro» a propósito: esa regla tiene más
+   especificidad y hasta ahora se comía el azul y el rojo, así que el quiz
+   se respondía casi sin color que distinguiera acertar de fallar. */
+.op.bien,.op.era,
+section.oscuro .op.bien,section.oscuro .op.era{
+  border-color:var(--senal);background:var(--senal);color:#fff;font-weight:700}
+.op.mal,section.oscuro .op.mal{
+  border-color:var(--aire);background:var(--aire);color:#fff;font-weight:700}
+.op.bien::before,.op.era::before{content:"✓";font-weight:700;margin-right:10px}
+.op.mal::before{content:"✕";font-weight:700;margin-right:10px}
+/* sobre el fondo casi negro el azul solo no destaca: lo perfila en blanco */
+section.oscuro .op.bien,section.oscuro .op.era{box-shadow:0 0 0 2px #fff}
+.op.era::after{content:"Esta era la correcta";display:block;margin-top:6px;
+  font-size:10.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(255,255,255,.75)}
+
+/* interruptor de sonido del quiz */
+.son{margin-top:18px;display:inline-flex;align-items:center;gap:9px;
+  background:transparent;border:1px solid rgba(255,255,255,.32);color:#fff;
+  font-family:inherit;font-size:12.5px;font-weight:700;letter-spacing:.05em;
+  padding:9px 15px;border-radius:var(--r);cursor:pointer;
+  transition:background .15s ease,border-color .15s ease,opacity .15s ease}
+.son:hover{background:rgba(255,255,255,.12)}
+.son:focus-visible{outline:3px solid var(--aire);outline-offset:3px}
+.son[aria-pressed="false"]{opacity:.55}
 .expl{display:none;margin-top:14px;padding:14px 16px;border-left:var(--chyron-h) solid var(--aire);
   background:var(--humo);font-size:15px;line-height:1.55;border-radius:0 var(--r) var(--r) 0}
 section.oscuro .expl{background:rgba(255,255,255,.06)}
@@ -589,6 +612,9 @@ footer b{color:#fff;font-weight:700}
       <h2>Ocho situaciones reales</h2>
       <p class="sec-sub">No es un examen y no queda registrado. Responde y te explico al instante
         por qué. Toma menos de tres minutos.</p>
+      <button class="son" id="son" aria-pressed="true">
+        <span aria-hidden="true">♪</span><span>Sonido activado</span>
+      </button>
     </div>
 
     <div class="quiz" id="quiz"></div>
@@ -636,6 +662,40 @@ footer b{color:#fff;font-weight:700}
 <script>
 var REDUCE=matchMedia('(prefers-reduced-motion:reduce)').matches;
 
+/* ---------- sonido del quiz ----------
+   Sintetizado, no son archivos: así no depende de la red ni suma descargas.
+   El contexto se crea en el primer clic, que es lo que exigen los navegadores
+   para dejar sonar nada. */
+var AUDIO=null, sonidoOn=true;
+function tono(frecs,dur,tipo,vol){
+  if(!sonidoOn) return;
+  try{
+    AUDIO=AUDIO||new (window.AudioContext||window.webkitAudioContext)();
+    if(AUDIO.state==='suspended') AUDIO.resume();
+    var t0=AUDIO.currentTime;
+    frecs.forEach(function(f,k){
+      var o=AUDIO.createOscillator(), g=AUDIO.createGain();
+      o.type=tipo; o.frequency.value=f;
+      var ini=t0+k*dur*0.6, fin=ini+dur;
+      g.gain.setValueAtTime(0.0001,ini);
+      g.gain.linearRampToValueAtTime(vol,ini+0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001,fin);
+      o.connect(g); g.connect(AUDIO.destination);
+      o.start(ini); o.stop(fin+0.03);
+    });
+  }catch(e){}
+}
+function suenaBien(){ tono([659.25,987.77],0.16,'sine',0.13); }   // mi–si, sube
+function suenaMal(){  tono([185,138.6],0.24,'triangle',0.11); }   // grave y baja
+
+var botonSon=document.getElementById('son');
+botonSon.addEventListener('click',function(){
+  sonidoOn=!sonidoOn;
+  botonSon.setAttribute('aria-pressed',String(sonidoOn));
+  botonSon.querySelector('span:last-child').textContent=sonidoOn?'Sonido activado':'Sonido apagado';
+  if(sonidoOn) suenaBien();
+});
+
 /* ---------- la barra de aire se encoge al bajar ---------- */
 var aire=document.getElementById('aire');
 function ajustarAire(){ aire.classList.toggle('compacta',(window.scrollY||0)>130); }
@@ -659,7 +719,15 @@ function Recorrido(id,modo,pasos){
   var cuenta=raiz.querySelector('.paso-n b');
   var barra=raiz.querySelector('.barra i');
   var bPausa=raiz.querySelector('[data-acc="pausa"]');
-  var i=0,reloj=null,tecla=null,corriendo=false,DUR=9000;
+  var i=0,reloj=null,tecla=null,corriendo=false;
+
+  /* Cada paso dura lo que pide su texto: lectura a 200 palabras por minuto
+     mas 3.5 s de margen para mirar lo resaltado, que es el objetivo. Un
+     numero plano dejaba cortos diez de los once pasos. */
+  function durActual(){
+    var t=pasos[i].t.replace(/<[^>]+>/g,' ').trim().split(/\s+/).length;
+    return Math.max(9000, Math.round(t/(200/60)*1000)+3500);
+  }
 
   /* Coloca el globo junto a la zona activa y apunta la flecha hacia ella.
      Prefiere ponerlo debajo; si no cabe, lo pasa arriba y le da la vuelta
@@ -711,7 +779,7 @@ function Recorrido(id,modo,pasos){
 
   function barraCorre(on){
     if(!barra) return;
-    barra.style.setProperty('--dur',DUR+'ms');  // una sola fuente de verdad
+    barra.style.setProperty('--dur',durActual()+'ms');  // una sola fuente de verdad
     barra.classList.remove('corre'); void barra.offsetWidth;
     if(on&&!REDUCE) barra.classList.add('corre');
   }
@@ -737,7 +805,7 @@ function Recorrido(id,modo,pasos){
   }
   function programar(){
     clearTimeout(reloj);
-    if(corriendo&&!REDUCE) reloj=setTimeout(function(){ir(i+1,true);},DUR);
+    if(corriendo&&!REDUCE) reloj=setTimeout(function(){ir(i+1,true);},durActual());
   }
   function ir(n,teclear){
     limpiar();
@@ -857,8 +925,8 @@ cont.addEventListener('click',function(ev){
   var qi=+b.dataset.q, oi=+b.dataset.o, q=PREGUNTAS[qi];
   var grupo=b.parentElement.querySelectorAll('.op');
   grupo.forEach(function(x){ x.disabled=true; });
-  if(oi===q.c){ b.classList.add('bien'); aciertos++; }
-  else{ b.classList.add('mal'); grupo[q.c].classList.add('era'); }
+  if(oi===q.c){ b.classList.add('bien'); aciertos++; suenaBien(); }
+  else{ b.classList.add('mal'); grupo[q.c].classList.add('era'); suenaMal(); }
   document.getElementById('e'+qi).classList.add('ver');
   respondidas++;
   if(respondidas===PREGUNTAS.length){
