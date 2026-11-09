@@ -173,7 +173,7 @@ footer b{color:#fff;font-weight:700}
   font-size:10px;white-space:nowrap}
 .demo-cab .barra{flex:1;height:3px;background:rgba(255,255,255,.25);overflow:hidden}
 .demo-cab .barra i{display:block;height:100%;width:0;background:var(--aire)}
-.demo-cab .barra i.corre{animation:llenar 7s linear forwards}
+.demo-cab .barra i.corre{animation:llenar var(--dur,9s) linear forwards}
 @keyframes llenar{from{width:0}to{width:100%}}
 .demo-btn{flex:0 0 auto;width:29px;height:29px;border:1px solid rgba(255,255,255,.38);
   background:transparent;color:#fff;border-radius:var(--r);cursor:pointer;
@@ -639,7 +639,7 @@ function Recorrido(id,modo,pasos){
   var cuenta=raiz.querySelector('.paso-n b');
   var barra=raiz.querySelector('.barra i');
   var bPausa=raiz.querySelector('[data-acc="pausa"]');
-  var i=0,reloj=null,tecla=null,corriendo=false,DUR=7000;
+  var i=0,reloj=null,tecla=null,corriendo=false,DUR=9000;
 
   /* Coloca el globo junto a la zona activa y apunta la flecha hacia ella.
      Prefiere ponerlo debajo; si no cabe, lo pasa arriba y le da la vuelta
@@ -672,6 +672,7 @@ function Recorrido(id,modo,pasos){
 
   function barraCorre(on){
     if(!barra) return;
+    barra.style.setProperty('--dur',DUR+'ms');  // una sola fuente de verdad
     barra.classList.remove('corre'); void barra.offsetWidth;
     if(on&&!REDUCE) barra.classList.add('corre');
   }
