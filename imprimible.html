@@ -14,51 +14,52 @@ body{font-family:"Segoe UI",sans-serif;font-weight:350;color:var(--tinta);
   font-size:8.7pt;line-height:1.32;-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .hoja{width:210mm;height:297mm;padding:11mm 11mm 7mm;display:flex;flex-direction:column;overflow:hidden}
 
-.cab{background:var(--senal);color:#fff;padding:5.4mm 7mm;border-bottom:1.3mm solid var(--aire);
-  margin:-11mm -11mm 5mm;display:flex;align-items:flex-end;justify-content:space-between;gap:8mm}
-.cab h1{font-size:21pt;font-weight:700;letter-spacing:-.03em;line-height:.98}
-.cab .sub{font-size:9.4pt;color:rgba(255,255,255,.82);margin-top:2.6mm;max-width:95mm}
+/* El logo va a 20 mm de alto (mínimo del manual en impresión) y el área de
+   respeto es 0.441× esa altura = 8.8 mm. El azul de la cabecera cuenta como
+   aire, así que basta con que nada se acerque más de eso. */
+.cab{background:var(--senal);color:#fff;padding:9mm 9mm 5.4mm;border-bottom:1.3mm solid var(--aire);
+  margin:-11mm -11mm 5mm;display:flex;align-items:flex-end;justify-content:space-between;gap:9mm}
+.logo-kit{display:block;height:20mm;width:auto;margin:0 0 3.4mm auto}
+.cab h1{font-size:18.5pt;font-weight:700;letter-spacing:-.03em;line-height:.98}
+.cab .sub{font-size:9.4pt;color:rgba(255,255,255,.82);margin-top:2.2mm;max-width:112mm}
 .cab .url{font-size:8pt;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-  text-align:right;white-space:nowrap}
-.cab .url small{display:block;font-weight:350;letter-spacing:.06em;opacity:.6;margin-top:1.4mm;
+  margin-top:2mm;white-space:nowrap}
+.cab .url small{font-weight:350;letter-spacing:.06em;opacity:.6;margin-left:2.5mm;
   font-size:7pt;text-transform:none}
 
 .cols{display:flex;gap:5mm;flex:1}
-.col{flex:1;display:flex;flex-direction:column;gap:3.2mm}
+.col{flex:1;display:flex;flex-direction:column;gap:2.8mm}
 
-.bloque{border:.3mm solid var(--borde);border-left:1.3mm solid var(--senal);padding:2.8mm 3.4mm}
+.bloque{border:.3mm solid var(--borde);border-left:1.3mm solid var(--senal);padding:2.4mm 3.4mm}
 .bloque.rojo{border-left-color:var(--aire);border-left-width:2.2mm;background:var(--humo)}
 .bloque h2{font-size:10.2pt;font-weight:700;letter-spacing:-.01em;line-height:1.16}
 .bloque .et{font-size:6.6pt;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
   color:var(--aire);margin-bottom:1.6mm}
-ul{list-style:none;margin-top:2.4mm}
-li{position:relative;padding:1.5mm 0 1.5mm 4.2mm;border-top:.25mm solid var(--borde)}
+ul{list-style:none;margin-top:2mm}
+li{position:relative;padding:1.3mm 0 1.3mm 4.2mm;border-top:.25mm solid var(--borde)}
 li:first-child{border-top:0;padding-top:0}
 li::before{content:"";position:absolute;left:0;top:3.1mm;width:2.4mm;height:.6mm;background:var(--aire)}
 li:first-child::before{top:1.6mm}
 b{font-weight:700}
 
-.regla{background:var(--senal);color:#fff;padding:3.4mm 4.4mm;margin-top:3.2mm}
+.regla{background:var(--senal);color:#fff;padding:2.8mm 4.4mm;margin-top:3.2mm}
 .regla .et{color:#fff;opacity:.62;font-size:6.6pt;font-weight:700;letter-spacing:.16em;
   text-transform:uppercase;margin-bottom:1.8mm}
 .regla p{font-size:12pt;font-weight:700;letter-spacing:-.015em;line-height:1.2}
 .regla small{display:block;font-weight:350;font-size:8.4pt;margin-top:2.2mm;
   color:rgba(255,255,255,.8);line-height:1.38}
 
-.reporte{border:.5mm dashed var(--aire);padding:3mm 4mm;text-align:center}
+.reporte{border:.5mm dashed var(--aire);padding:2.6mm 4mm;text-align:center}
 .reporte .et{color:var(--aire);font-size:6.6pt;font-weight:700;letter-spacing:.16em;
   text-transform:uppercase}
 .reporte .dato{font-size:13pt;font-weight:700;margin-top:2mm;letter-spacing:-.02em}
 .reporte small{display:block;color:var(--niebla);font-size:7.6pt;margin-top:1.6mm}
 
 .tres{display:flex;gap:3mm;margin-top:1mm}
-.tres div{flex:1;border-top:1mm solid var(--aire);padding-top:2.4mm}
+.tres div{flex:1;border-top:1mm solid var(--aire);padding-top:2mm}
 .tres .n{font-size:9.6pt;font-weight:700;letter-spacing:-.01em}
 .tres p{font-size:7.8pt;color:var(--niebla);margin-top:1mm;line-height:1.32}
 
-.pie{margin-top:3.4mm;padding-top:2.4mm;border-top:.3mm solid var(--borde);
-  display:flex;justify-content:space-between;font-size:7.2pt;color:var(--niebla)}
-.pie b{color:var(--tinta)}
 </style>
 </head>
 <body>
@@ -69,8 +70,9 @@ b{font-weight:700}
       <h1>¿Algo te huele raro?</h1>
       <p class="sub">Las señales que importan, qué hacer si ya pasó y a quién avisar.
         Pégalo donde lo veas.</p>
+      <p class="url">ojo.secpro.co <small>Quiz y guía completa</small></p>
     </div>
-    <div class="url">ojo.secpro.co<small>Quiz y guía completa</small></div>
+    <img class="logo-kit" src="secpro-logo-blanco.png" alt="SecPro — Security Professionals">
   </div>
 
   <div class="cols">
@@ -168,11 +170,6 @@ b{font-weight:700}
     <p class="dato">Pendiente de confirmar</p>
     <small>Reportar no es confesar. Caer en un engaño bien hecho es lo que estaba diseñado para pasar;
       lo único que sí es un problema es el silencio.</small>
-  </div>
-
-  <div class="pie">
-    <span><b>SecPro</b> — Security Professionals</span>
-    <span>ojo.secpro.co</span>
   </div>
 
 </div>

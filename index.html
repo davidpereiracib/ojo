@@ -14,7 +14,7 @@
   --pantalla:#070B18;   /* neutro profundo */
   --tinta:#10172E;
   --humo:#EEF1F8;
-  --niebla:#5C6478;
+  --niebla:#4A5266;
   --papel:#FFFFFF;
   --borde:#D5DCEC;
 
@@ -26,7 +26,7 @@ html{scroll-behavior:smooth}
 body{
   background:var(--papel);color:var(--tinta);
   font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",sans-serif;
-  font-weight:350;font-size:17px;line-height:1.6;
+  font-weight:400;font-size:17px;line-height:1.6;
   -webkit-font-smoothing:antialiased;
 }
 .wrap{max-width:860px;margin:0 auto;padding:0 22px}
@@ -39,18 +39,27 @@ body{
 h2{font-weight:700;letter-spacing:-.022em;line-height:1.1;
   font-size:clamp(1.6rem,4.4vw,2.3rem)}
 h3{font-weight:700;letter-spacing:-.012em;font-size:1.12rem;line-height:1.3}
-p{font-weight:350}
+p{font-weight:400}
 .sec-sub{color:var(--niebla);margin-top:10px;max-width:60ch}
 
 /* ============ barra superior: la luz de aire ============ */
+/* El logo cumple el mínimo de 45 px de alto. El área de respeto es la altura
+   de la «o» de «Pro» — medida en el archivo: 94 px de 213, o sea 0.441×.
+   A 45 px de logo son 20 px de aire alrededor. La barra se encoge al bajar
+   para no gastar media pantalla de celular en un logotipo ya visto. */
 .aire-bar{position:sticky;top:0;z-index:50;background:var(--pantalla);color:#fff;
-  display:flex;align-items:center;gap:11px;padding:9px 22px;font-size:11px;
-  font-weight:700;letter-spacing:.17em;text-transform:uppercase}
+  display:flex;align-items:center;gap:11px;padding:20px 22px;font-size:11px;
+  font-weight:700;letter-spacing:.17em;text-transform:uppercase;
+  transition:padding .25s ease}
 .punto{width:8px;height:8px;border-radius:50%;background:var(--aire);flex:0 0 auto;
   animation:latir 2s ease-in-out infinite}
 @keyframes latir{0%,100%{opacity:1}50%{opacity:.28}}
 .aire-bar .sep{flex:1}
-.aire-bar .marca{opacity:.55;letter-spacing:.12em}
+.marca{display:block;flex:0 0 auto;overflow:hidden;height:45px;
+  transition:height .25s ease,width .25s ease,opacity .2s ease}
+.marca img{display:block;height:45px;width:auto}
+.aire-bar.compacta{padding-top:9px;padding-bottom:9px}
+.aire-bar.compacta .marca{height:0;width:0;opacity:0}
 
 /* ============ portada ============ */
 .hero{background:var(--senal);color:#fff;padding:70px 0 64px;position:relative;overflow:hidden}
@@ -71,10 +80,10 @@ p{font-weight:350}
 .chyron .bloque{flex:0 0 13px;background:var(--aire)}
 .chyron .cuerpo{flex:1;padding:15px 19px}
 .chyron .nombre{display:block;font-weight:700;font-size:1.12rem;letter-spacing:-.012em;line-height:1.22}
-.chyron .cargo{display:block;font-size:12.5px;color:rgba(255,255,255,.72);margin-top:4px;
+.chyron .cargo{display:block;font-size:12.5px;color:rgba(255,255,255,.84);margin-top:4px;
   letter-spacing:.03em;line-height:1.3}
 .chyron .mas{flex:0 0 46px;display:flex;align-items:center;justify-content:center;
-  font-size:21px;font-weight:300;color:rgba(255,255,255,.65);
+  font-size:21px;font-weight:400;color:rgba(255,255,255,.8);
   transition:transform .22s ease}
 .chyron[aria-expanded="true"] .mas{transform:rotate(45deg)}
 .chyron.alerta{background:var(--aire)}
@@ -103,7 +112,7 @@ p{font-weight:350}
 /* ============ secciones ============ */
 section{padding:62px 0}
 section.oscuro{background:var(--pantalla);color:#fff}
-section.oscuro .sec-sub{color:rgba(255,255,255,.66)}
+section.oscuro .sec-sub{color:rgba(255,255,255,.78)}
 .sec-cab{border-left:var(--chyron-h) solid var(--aire);padding-left:16px}
 .sec-cab .rotulo{color:var(--aire);margin-bottom:9px}
 
@@ -150,9 +159,98 @@ section.oscuro .marcador .t{color:rgba(255,255,255,.66)}
 .boton:hover,.boton:focus-visible{transform:translateX(5px);box-shadow:-5px 0 0 0 var(--aire)}
 .boton:focus-visible{outline:3px solid var(--aire);outline-offset:3px}
 
-footer{background:var(--pantalla);color:rgba(255,255,255,.5);padding:36px 0;font-size:13px}
-footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center}
+footer{background:var(--pantalla);color:rgba(255,255,255,.62);padding:36px 0;font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:24px;justify-content:space-between;align-items:center}
 footer b{color:#fff;font-weight:700}
+.pie-logo{display:block;height:48px;width:auto}
+
+/* ============ recorridos guiados ============ */
+.demo{margin:4px 0 20px;border:1px solid var(--borde);border-radius:var(--r);
+  background:var(--papel);overflow:hidden}
+.demo-cab{display:flex;align-items:center;gap:9px;padding:9px 11px;
+  background:var(--senal);color:#fff}
+.demo-cab .paso-n{font-weight:700;letter-spacing:.13em;text-transform:uppercase;
+  font-size:10px;white-space:nowrap}
+.demo-cab .barra{flex:1;height:3px;background:rgba(255,255,255,.25);overflow:hidden}
+.demo-cab .barra i{display:block;height:100%;width:0;background:var(--aire)}
+.demo-cab .barra i.corre{animation:llenar 7s linear forwards}
+@keyframes llenar{from{width:0}to{width:100%}}
+.demo-btn{flex:0 0 auto;width:29px;height:29px;border:1px solid rgba(255,255,255,.38);
+  background:transparent;color:#fff;border-radius:var(--r);cursor:pointer;
+  font-family:inherit;font-size:12px;line-height:1;padding:0;
+  display:flex;align-items:center;justify-content:center}
+.demo-btn:hover{background:rgba(255,255,255,.16)}
+.demo-btn:focus-visible{outline:3px solid var(--aire);outline-offset:2px}
+/* alto mínimo: si no, la caja cambia de tamaño en cada paso y el diseño salta */
+.demo-exp{padding:14px 16px;border-top:1px solid var(--borde);
+  border-left:var(--chyron-h) solid var(--aire);background:var(--humo);
+  font-size:14.5px;line-height:1.5;min-height:9.4em}
+.demo-exp .n{display:inline-block;background:var(--aire);color:#fff;font-weight:700;
+  font-size:11px;width:19px;height:19px;border-radius:50%;text-align:center;
+  line-height:19px;margin-right:8px}
+.escena{position:relative;background:#FAFBFD;font-size:13px;line-height:1.45}
+.escena [data-z]{transition:opacity .3s ease,box-shadow .25s ease;border-radius:2px}
+.escena.enfoca [data-z]:not(.activa){opacity:.38}
+.escena.enfoca [data-z].activa{box-shadow:0 0 0 2px var(--aire)}
+
+/* --- maqueta de correo --- */
+.correo{padding:15px 14px}
+.c-asunto{display:block;font-weight:700;font-size:15px;letter-spacing:-.012em;margin-bottom:12px}
+.c-de{display:flex;gap:9px;align-items:flex-start;padding-bottom:12px;
+  border-bottom:1px solid var(--borde);margin-bottom:12px}
+.c-av{flex:0 0 32px;height:32px;border-radius:50%;background:var(--niebla);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11.5px}
+.c-n{display:block;font-weight:700}
+.c-dir{display:block;color:var(--niebla);font-size:12px;overflow-wrap:anywhere;
+  max-height:0;opacity:0;overflow:hidden;
+  transition:max-height .45s ease,opacity .3s ease .12s}
+.escena.abre-dir .c-dir{max-height:46px;opacity:1}
+.c-dom{font-weight:700;color:var(--tinta)}
+.c-aviso{border-left:3px solid var(--niebla);background:#EFF2F8;padding:9px 11px;margin:12px 0}
+.c-boton{display:inline-block;background:var(--niebla);color:#fff;font-weight:700;
+  padding:10px 20px;border-radius:var(--r);margin:10px 0;font-size:13px}
+.c-firma{margin-top:14px;padding-top:10px;border-top:1px solid var(--borde);
+  font-size:11.5px;color:var(--niebla)}
+.c-estado{position:absolute;left:0;bottom:0;z-index:5;max-width:96%;
+  background:var(--pantalla);color:#fff;font-size:11.5px;padding:7px 11px;
+  border-radius:0 var(--r) 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  opacity:0;pointer-events:none;transform:translateY(115%);
+  transition:transform .35s ease,opacity .25s ease}
+.escena.ve-estado .c-estado{opacity:1;transform:none}
+
+/* --- maqueta de chat --- */
+.chat-cab{display:flex;gap:10px;align-items:center;padding:12px 14px;
+  border-bottom:1px solid var(--borde)}
+.chat-av{flex:0 0 34px;height:34px;border-radius:50%;background:var(--niebla);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11.5px}
+.chat-n{font-weight:700;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.etq-ext{background:var(--aire);color:#fff;font-size:9.5px;font-weight:700;
+  letter-spacing:.1em;padding:2px 6px;border-radius:2px}
+.chat-dir{display:block;color:var(--niebla);font-size:12px;word-break:break-all}
+.chat-aviso{background:#EFF2F8;border-bottom:1px solid var(--borde);padding:8px 14px;
+  font-size:11.5px;color:var(--niebla)}
+/* Alto fijo y llenado desde abajo, como un chat real: así el componente no
+   cambia de tamaño y la explicación no se va de la pantalla al avanzar. */
+.chat-hilo{padding:14px;display:flex;flex-direction:column;justify-content:flex-end;
+  gap:10px;height:290px;overflow-y:auto}
+.burb{max-width:85%;align-self:flex-start;flex:0 0 auto;background:#EAEEF6;padding:9px 12px;
+  border-radius:2px 10px 10px 10px;display:none;transition:box-shadow .25s ease}
+.burb.visible{display:block;animation:entraBurb .3s ease}
+@keyframes entraBurb{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.burb.yo{align-self:flex-end;background:var(--senal);color:#fff;border-radius:10px 2px 10px 10px}
+.burb .h{display:block;font-size:10.5px;color:var(--niebla);margin-top:5px;opacity:.85}
+.burb.yo .h{color:rgba(255,255,255,.6)}
+.burb.activa{box-shadow:0 0 0 2px var(--aire)}
+.cl{border-radius:2px;padding:0 2px;transition:background .3s ease,color .3s ease}
+.activa .cl{background:var(--aire);color:#fff}
+.escribiendo{align-self:flex-start;display:none;gap:4px;padding:12px 14px;
+  background:#EAEEF6;border-radius:2px 10px 10px 10px}
+.escribiendo.visible{display:flex}
+.escribiendo i{width:6px;height:6px;border-radius:50%;background:var(--niebla);
+  animation:tecleo 1.1s infinite}
+.escribiendo i:nth-child(2){animation-delay:.18s}
+.escribiendo i:nth-child(3){animation-delay:.36s}
+@keyframes tecleo{0%,60%,100%{opacity:.3;transform:none}30%{opacity:1;transform:translateY(-3px)}}
 
 @media (prefers-reduced-motion:reduce){
   *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
@@ -161,15 +259,19 @@ footer b{color:#fff;font-weight:700}
   .chyron .mas{flex-basis:38px}
   section{padding:48px 0}
 }
+/* el alto mínimo evita saltos en el celular; en pantalla ancha el texto
+   ocupa la mitad de líneas y ese mismo mínimo dejaría un hueco */
+@media (min-width:700px){ .demo-exp{min-height:5.2em} }
 </style>
 </head>
 <body>
 
-<div class="aire-bar">
+<div class="aire-bar" id="aire">
   <span class="punto" aria-hidden="true"></span>
   <span>ojo.secpro.co</span>
   <span class="sep"></span>
-  <span class="marca">SecPro</span>
+  <span class="marca"><img src="secpro-logo-blanco.png" width="669" height="215"
+    alt="SecPro — Security Professionals"></span>
 </div>
 
 <header class="hero">
@@ -208,6 +310,55 @@ footer b{color:#fff;font-weight:700}
           <li><b>El enlace.</b> Pasa el cursor por encima y lee a dónde va de verdad. En el celular, mantén pulsado.</li>
           <li><b>Lo que te pide.</b> Si pide usuario y contraseña, ya está: ninguna entidad legítima lo hace por correo.</li>
         </ul>
+
+        <p class="et">Ahora míralo en un correo</p>
+        <!-- Correo inventado. Empresa y dominios ficticios a propósito: esta página es
+             pública, y un membrete real circulando en un pantallazo no tiene vuelta atrás. -->
+        <div class="demo" id="d-correo">
+          <div class="demo-cab">
+            <span class="paso-n">Paso <b>1</b> de 6</span>
+            <span class="barra"><i></i></span>
+            <button class="demo-btn" data-acc="atras" aria-label="Señal anterior">‹</button>
+            <button class="demo-btn" data-acc="pausa" aria-label="Pausar">❚❚</button>
+            <button class="demo-btn" data-acc="adelante" aria-label="Señal siguiente">›</button>
+          </div>
+
+          <div class="escena correo">
+            <!-- data-z="0" = nunca es el paso activo, así que se atenúa siempre:
+                 el foco apaga todo el correo menos la zona de la que se está hablando -->
+            <span class="c-asunto" data-z="0">Nueva política de uso de IA — confirma tu acceso</span>
+
+            <div class="c-de">
+              <span class="c-av" data-z="0" aria-hidden="true">TI</span>
+              <span>
+                <span class="c-n" data-z="1">Soporte TI · Tu Empresa</span>
+                <span class="c-dir" data-z="2">&lt;soporte@<span
+                  class="c-dom">tuempresa<span class="cl">-seguridad</span>.co</span>&gt;</span>
+              </span>
+            </div>
+
+            <p data-z="0">Estimado colaborador,</p>
+
+            <p class="c-aviso" data-z="3"><b>Importante:</b> los accesos no confirmados
+              <b>antes de mañana a las 6:00 p. m.</b> serán suspendidos automáticamente.</p>
+
+            <span class="c-boton" data-z="4">Confirmar mi acceso</span>
+
+            <p data-z="5">Ingresa con <b>tu usuario y tu contraseña</b> para aceptar las
+              nuevas condiciones. El proceso toma menos de dos minutos.</p>
+
+            <p data-z="6" style="margin-top:10px">Si ya realizaste la confirmación,
+              puedes ignorar este mensaje.</p>
+
+            <p class="c-firma" data-z="0">Dirección de Seguridad de la Información · Tu Empresa S. A.<br>
+              Mensaje automático, por favor no responda a esta dirección.</p>
+
+            <span class="c-estado">https://acceso-tuempresa.verificacion-id.net/login</span>
+          </div>
+
+          <p class="demo-exp" aria-live="polite" role="status"></p>
+        </div>
+
         <p class="et">Qué haces</p>
         <ul>
           <li>No uses su enlace. Abre el navegador y escribe tú la dirección que ya conoces.</li>
@@ -237,6 +388,50 @@ footer b{color:#fff;font-weight:700}
           <li>Luego te sacan a WhatsApp, donde no quedan rastros corporativos.</li>
           <li>Y solo entonces piden el archivo, el usuario o el pago.</li>
         </ul>
+
+        <p class="et">Ahora míralo pasar</p>
+        <!-- Conversación inventada, persona y empresa ficticias. Mismo patrón, ningún dato real. -->
+        <div class="demo" id="d-chat">
+          <div class="demo-cab">
+            <span class="paso-n">Paso <b>1</b> de 5</span>
+            <span class="barra"><i></i></span>
+            <button class="demo-btn" data-acc="atras" aria-label="Paso anterior">‹</button>
+            <button class="demo-btn" data-acc="pausa" aria-label="Pausar">❚❚</button>
+            <button class="demo-btn" data-acc="adelante" aria-label="Paso siguiente">›</button>
+          </div>
+
+          <div class="escena">
+            <div class="chat-cab" data-z="1">
+              <span class="chat-av" aria-hidden="true">CR</span>
+              <span>
+                <span class="chat-n">Carlos Restrepo <span class="etq-ext">EXTERNO</span></span>
+                <span class="chat-dir"><span class="cl">c.restrepo@tuempresa-corp.net</span></span>
+              </span>
+            </div>
+            <p class="chat-aviso">⚠ Esta persona es de fuera de tu organización.
+              Ten cuidado al compartir información.</p>
+
+            <div class="chat-hilo">
+              <div class="burb" data-z="2">Hola, buenos días. ¿Estás ocupado ahora?
+                <span class="h">8:04 a. m.</span></div>
+              <div class="burb yo" data-z="3">Buenos días, no. Dígame.
+                <span class="h">8:06 a. m.</span></div>
+              <div class="burb" data-z="4">Necesito que me ayudes con algo y
+                <span class="cl">te pido que no lo comentes con nadie por ahora</span>.
+                <span class="h">8:07 a. m.</span></div>
+              <div class="burb" data-z="5">Voy entrando a una reunión.
+                <span class="cl">Pásame tu celular y seguimos por WhatsApp</span>.
+                <span class="h">8:08 a. m.</span></div>
+              <div class="burb" data-z="6">Una última cosa:
+                <span class="cl">necesito el archivo y que me confirmes tu usuario</span>,
+                el mío está bloqueado. <span class="h">8:11 a. m.</span></div>
+              <div class="escribiendo" aria-hidden="true"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+
+          <p class="demo-exp" aria-live="polite" role="status"></p>
+        </div>
+
         <p class="et">Qué haces</p>
         <ul>
           <li><b>Verifica por otro canal. Nunca por donde llegó.</b> Llama al número que ya tenías o camina hasta el puesto.</li>
@@ -396,19 +591,126 @@ footer b{color:#fff;font-weight:700}
 
 <footer>
   <div class="wrap">
-    <span><b>SecPro</b> — Security Professionals</span>
+    <img class="pie-logo" src="secpro-logo-blanco.png" width="669" height="215"
+      alt="SecPro — Security Professionals">
     <span>ojo.secpro.co</span>
   </div>
 </footer>
 
 <script>
+var REDUCE=matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* ---------- la barra de aire se encoge al bajar ---------- */
+var aire=document.getElementById('aire');
+function ajustarAire(){ aire.classList.toggle('compacta',(window.scrollY||0)>130); }
+addEventListener('scroll',ajustarAire,{passive:true});
+ajustarAire();  // el navegador puede restaurar la posición al recargar
+
+/* ---------- recorridos guiados ----------
+   Un solo motor para las dos maquetas. Cambia el modo:
+   «foco» atenúa todo menos la zona señalada (el correo es un objeto quieto);
+   «acumula» va revelando (el chat es una conversación que pasa en el tiempo). */
+function Recorrido(id,modo,pasos){
+  var raiz=document.getElementById(id); if(!raiz) return null;
+  var escena=raiz.querySelector('.escena');
+  var zonas=[].slice.call(raiz.querySelectorAll('[data-z]'));
+  var hilo=raiz.querySelector('.chat-hilo');
+  var esc=raiz.querySelector('.escribiendo');
+  var expl=raiz.querySelector('.demo-exp');
+  var cuenta=raiz.querySelector('.paso-n b');
+  var barra=raiz.querySelector('.barra i');
+  var bPausa=raiz.querySelector('[data-acc="pausa"]');
+  var i=0,reloj=null,tecla=null,corriendo=false,DUR=7000;
+
+  function barraCorre(on){
+    if(!barra) return;
+    barra.classList.remove('corre'); void barra.offsetWidth;
+    if(on&&!REDUCE) barra.classList.add('corre');
+  }
+  function pintar(){
+    var p=pasos[i];
+    zonas.forEach(function(el){
+      var z=+el.dataset.z;
+      el.classList.toggle('activa',z===p.act);
+      if(modo==='acumula') el.classList.toggle('visible',z<=p.z);
+    });
+    escena.classList.toggle('enfoca',modo==='foco');
+    escena.classList.toggle('abre-dir',!!p.abre);
+    escena.classList.toggle('ve-estado',!!p.estado);
+    expl.innerHTML='<span class="n">'+(i+1)+'</span>'+p.t;
+    cuenta.textContent=i+1;
+    if(hilo) hilo.scrollTop=hilo.scrollHeight;
+    barraCorre(corriendo);
+  }
+  function limpiar(){
+    clearTimeout(reloj); clearTimeout(tecla);
+    if(esc) esc.classList.remove('visible');
+  }
+  function programar(){
+    clearTimeout(reloj);
+    if(corriendo&&!REDUCE) reloj=setTimeout(function(){ir(i+1,true);},DUR);
+  }
+  function ir(n,teclear){
+    limpiar();
+    var antes=i; i=(n+pasos.length)%pasos.length;
+    if(teclear&&esc&&!REDUCE&&i>antes){
+      hilo.appendChild(esc); esc.classList.add('visible');
+      tecla=setTimeout(function(){
+        esc.classList.remove('visible'); pintar(); programar();
+      },850);
+    }else{ pintar(); programar(); }
+  }
+  function play(on){
+    corriendo=on;
+    bPausa.textContent=on?'❚❚':'▶';
+    bPausa.setAttribute('aria-label',on?'Pausar':'Reproducir');
+    if(on){ programar(); barraCorre(true); } else { limpiar(); barraCorre(false); }
+  }
+  raiz.addEventListener('click',function(ev){
+    var b=ev.target.closest('[data-acc]'); if(!b) return;
+    var a=b.dataset.acc;
+    if(a==='pausa'){ play(!corriendo); return; }
+    play(false);
+    ir(a==='adelante'?i+1:i-1,false);
+  });
+  // sin autoavance el botón de pausa no gobierna nada: sobra
+  if(REDUCE) bPausa.hidden=true;
+  pintar();
+  return {
+    abrir:function(){ i=0; pintar(); if(!REDUCE) play(true); },
+    cerrar:function(){ play(false); }
+  };
+}
+
+var RECORRIDOS={};
+
+RECORRIDOS.p1=Recorrido('d-correo','foco',[
+ {z:1,act:1,t:'<b>El nombre no es la dirección.</b> «Soporte TI · Tu Empresa» es texto libre: lo escribe quien envía y no hay nada que lo valide. Empezar por el nombre es empezar por lo único que el atacante controla del todo.'},
+ {z:2,act:2,abre:true,t:'<b>Ábrelo y lee el dominio, letra por letra.</b> La dirección real es <b>tuempresa-seguridad.co</b>. Un guion de más y un dominio distinto: eso es todo lo que separa lo legítimo de lo falso.'},
+ {z:3,act:3,abre:true,t:'<b>La prisa.</b> «Antes de mañana a las 6». La urgencia no está ahí por casualidad: está para que actúes antes de verificar. Y amenaza justo con lo que más duele, quedarte sin acceso.'},
+ {z:4,act:4,abre:true,estado:true,t:'<b>El enlace dice una cosa y va a otra.</b> Pasa el cursor por encima sin hacer clic —en el celular, mantén pulsado— y lee abajo el destino real. El texto visible de un enlace es solo texto.'},
+ {z:5,act:5,abre:true,t:'<b>Lo que te pide de verdad.</b> Usuario y contraseña. Ninguna entidad legítima los pide por correo. Ninguna, nunca. Si llegaste hasta aquí dudando, esta línea cierra la duda.'},
+ {z:6,act:6,abre:true,t:'<b>Y una que casi nadie ve.</b> «Si ya realizaste la confirmación, ignora este mensaje» da una salida cómoda y baja la guardia. Si no lo hiciste, haces clic. Si crees que sí, no preguntas. Gana en los dos casos.'}
+]);
+
+RECORRIDOS.p2=Recorrido('d-chat','acumula',[
+ {z:1,act:1,t:'<b>Nadie hackeó nada.</b> El acceso externo está abierto por diseño: cualquiera con su propio Microsoft 365 puede escribirte, y el nombre que ves lo escribió él. El dominio es la única verdad, y <b>tuempresa-corp.net</b> no es de la empresa.'},
+ {z:3,act:2,t:'<b>Primero solo busca que respondas.</b> No pide nada. Una respuesta cualquiera confirma que la cuenta está activa y que el canal funciona. A partir de ahí ya hay una conversación abierta, y eso es lo que después da la confianza.'},
+ {z:4,act:4,t:'<b>El secreto.</b> Esta es la pieza clave y casi nunca se reconoce como señal. «No lo comentes» no protege ninguna negociación: <b>desactiva la verificación</b>. Si no puedes preguntarle a nadie, no puedes descubrir el engaño.'},
+ {z:5,act:5,t:'<b>Sacarte del canal corporativo.</b> En Teams queda registro, hay administración y está la etiqueta «Externo» que lo delata. En WhatsApp no hay nada de eso y el número ya no dice nada. La excusa siempre es una reunión.'},
+ {z:6,act:6,t:'<b>Y solo ahora, pide.</b> Nunca en el primer mensaje. Para cuando llega la petición ya hay conversación, confianza, confidencialidad y prisa. Y fíjate en qué pide: <b>no pide dinero, pide información y un usuario</b>.'}
+]);
+
 /* ---------- triaje ---------- */
 document.querySelectorAll('.chyron').forEach(function(b){
   b.addEventListener('click',function(){
-    var p=document.getElementById(b.getAttribute('aria-controls'));
+    var id=b.getAttribute('aria-controls');
+    var p=document.getElementById(id);
     var abierto=b.getAttribute('aria-expanded')==='true';
     b.setAttribute('aria-expanded',String(!abierto));
     p.classList.toggle('abierto',!abierto);
+    var r=RECORRIDOS[id];
+    if(r){ abierto ? r.cerrar() : r.abrir(); }
   });
 });
 
